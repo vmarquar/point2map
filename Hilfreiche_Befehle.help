@@ -1,0 +1,10 @@
+# Git commands
+
+git add *
+git status
+
+git commit -m "first commit"
+
+first use: (git remote add origin https://github.com/tilman/genesis-software.git)
+
+git push -u origin master # local update
