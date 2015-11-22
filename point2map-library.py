@@ -27,32 +27,39 @@ def checkGeometry(polygon,point):
         point has to be a either a layer object or a shp/gdb feature file. NOTE: Only the last row will be taken into consideration.
         Returns: A str-list of polygons which contain the point.
     """
-    #result=[]
-    string = "Kartengrundlage:\n"
-    print type(string)
-    polygonGeometries= arcpy.CopyFeatures_management(polygon,arcpy.Geometry())
     try:
-        pointGeometry= arcpy.CopyFeatures_management(point,arcpy.Geometry())[-1]
+
+        #result=[]
+        string = "Kartengrundlage:\n"
+        print type(string)
+        polygonGeometries= arcpy.CopyFeatures_management(polygon,arcpy.Geometry())
+        try:
+            pointGeometry= arcpy.CopyFeatures_management(point,arcpy.Geometry())[-1]
+        except:
+            arcpy.AddMessage("Die Point-Datei ist leer!")
+            print("Die Point-Datei ist leer!")
+        polygonNames = [row[0] for row in arcpy.da.SearchCursor(polygon, ("Name"))]
+
+        for index,polygonGeometry in enumerate(polygonGeometries):
+            if polygonGeometry.contains(pointGeometry):
+                print "Die Geometrie enthaelt:"+polygonNames[index]
+                print type(polygonNames[index])
+                #result.append(polygonNames[index])
+                string += polygonNames[index] +"\n"
+                print type(string)
+        return string
     except:
-        arcpy.AddMessage("Die Point-Datei ist leer!")
-        print("Die Point-Datei ist leer!")
-    polygonNames = [row[0] for row in arcpy.da.SearchCursor(polygon, ("Name"))]
-
-    for index,polygonGeometry in enumerate(polygonGeometries):
-        if polygonGeometry.contains(pointGeometry):
-            print "Die Geometrie enthaelt:"+polygonNames[index]
-            print type(polygonNames[index])
-            #result.append(polygonNames[index])
-            string += polygonNames[index] +"\n"
-            print type(string)
-    return string
-
+        arcpy.AddMessage("Fehler in Funktion checkGeometry (checkGeometry -> point2map-library).")
+        print("Fehler in Funktion checkGeometry (checkGeometry -> point2map-library).")
+        string = "Kartengrundlage:\nKeine Karte gefunden!"
+        return string
 
 
 
 def footprint(workspace="C:/workspace",static_value=1,mask="C:/data/maskpoly.jpg",outFootprint="footprint.shp",outIntRaster="IntRaster.jpg"):
-    """
-        Docu fehlt noch
+    """ calculates the footprint of a raster input.
+        Procedure: Creating a mask (of input raster), calculating an integer raster,
+        converting integer raster to polygon, deleting integer raster
     """
     try:
         arcpy.CheckOutExtension("Spatial")
@@ -64,8 +71,8 @@ def footprint(workspace="C:/workspace",static_value=1,mask="C:/data/maskpoly.jpg
         outInt.save(outIntRaster)
         #convert integer raster to polygon
         arcpy.RasterToPolygon_conversion(outInt, outFootprint, "NO_SIMPLIFY")
-        #TODO delete processes and int raster 
+        #TODO delete processes and int raster
 
     except:
-        print "Footprint (lokale Funktion -> point2map-llibrary) konnte nicht berechnet werden."
-        arcpy.AddMessage("Footprint (lokale Funktion -> point2map-llibrary) konnte nicht berechnet werden.")
+        print "Footprint (lokale Funktion -> point2map-library) konnte nicht berechnet werden."
+        arcpy.AddMessage("Footprint (lokale Funktion -> point2map-library) konnte nicht berechnet werden.")
