@@ -1,3 +1,3 @@
-# genesis-software
+# point2map
 ## Information about point2map script package
-Generates a pdf file wich contains several maps of same extent.
+Generates a .pdf file which contains several maps of same extent.
