@@ -14,6 +14,8 @@ dfName = "Layers"
 views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1"]
 scales = ["15000","30000","30000","50000","30000","300000","50000"]
 pdfRootPath = "C:/GIS-Data-Mirror-3-11-2015/"
+pdfRootPath = os.path.normpath(pdfRootPath)
+
 tempSHP = r"temp"
 
 
@@ -67,6 +69,7 @@ for layer in layers:
             arcpy.RefreshTOC()
             arcpy.RefreshActiveView()
 
+            """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
                 point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointGeometry=tempSHP,text_element="Karte")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
@@ -101,69 +104,64 @@ for layer in layers:
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte':
-                        elm.text = "Karte der Trinkwasser- und Heilquellenschutzgebiete"
-
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Trinkwasserschutzgebiete':
-                        elm.elementPositionX = 13.8323
-                    if elm.name == 'Heilquellenschutzgebiete':
-                        elm.elementPositionX = 13.8323
-                time.sleep(2)
+                point2mapLibrary.staticText2textElement(static_text="Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte")
+                point2mapLibrary.picture2legend(picture_element="Trinkwasserschutzgebiete",x=13.8323,y=5.0)
+                #TODO x von Heilquellenschutzgebiete genauer definieren
+                point2mapLibrary.picture2legend(picture_element="Heilquellenschutzgebiete",x=11.8323,y=5.0)
             if layer.name == "frost1":
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte':
-                        elm.text = "Frostzonenkarte von Bayern"
-                time.sleep(2)
+                point2mapLibrary.staticText2textElement(static_text="Frostzonenkarte Bayerns",text_element="Karte")
+
+            #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
+
+
+            """ DRUCKE KARTEN AUS """
+            time.sleep(2)
             if layer.name == "hydro2":
-                arcpy.mapping.ExportToPDF(mxd,pdfRootPath+layer.name+".pdf","PAGE_LAYOUT",resolution=85)
-                pdfDoc.appendPages(pdfRootPath+layer.name+".pdf")
+                outPDF = (os.path.join(pdfRootPath,layer.name)+".pdf")
+                arcpy.mapping.ExportToPDF(mxd,outPDF.encode("utf-8"),"PAGE_LAYOUT",resolution=85)
+                pdfDoc.appendPages(outPDF.encode("utf-8"))
             else:
-                arcpy.mapping.ExportToPDF(mxd,pdfRootPath+layer.name+".pdf","PAGE_LAYOUT")
-                pdfDoc.appendPages(pdfRootPath+layer.name+".pdf")
+                outPDF = (os.path.join(pdfRootPath,layer.name)+".pdf")
+                arcpy.mapping.ExportToPDF(mxd,outPDF.encode("utf-8"),"PAGE_LAYOUT")
+                pdfDoc.appendPages(outPDF.encode("utf-8"))
             try:
-                os.remove(pdfRootPath+layer.name+".pdf")
+                os.remove(outPDF.encode("utf-8"))
             except:
-                #TODO mit arcpy message austauschen!
                 print "Datei wurde nicht gefunden."
                 arcpy.AddMessage("Die angegebene Datei wurde nicht gefunden!")
 
+
+
             """ VERSCHIEBE Legenden wieder in den unsichtbaren Bereich """
-            if layer.name == "hydro1":
+            try:
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
                     if elm.name == 'HK500Legend':
                         elm.elementPositionX = 36.8211
-                        break
-            if layer.name == "hydro2":
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte':
-                        elm.text = u"Karte der wassersensiblen / überschwemmungsgefährdeten Bereiche"
-                    if elm.name == 'UeberschwemmungText':
-                        elm.elementPositionX = 44.2236
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete':
-                        elm.elementPositionX = 42.3524
-                    if elm.name == 'WassersensibelLegend':
-                        elm.elementPositionX = 41.9518
-            if layer.name == "hydro3":
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
                     if elm.name == 'Trinkwasserschutzgebiete':
-                        elm.elementPositionX = 53.8323
+                        elm.elementPositionX = 36.8211
                     if elm.name == 'Heilquellenschutzgebiete':
-                        elm.elementPositionX = 53.8323
+                        elm.elementPositionX = 36.8211
+                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete':
+                        elm.elementPositionX = 36.8211
+                    if elm.name == 'WassersensibelLegend':
+                        elm.elementPositionX = 36.8211
+                    if elm.name == 'UeberschwemmungText':
+                        elm.elementPositionX = 36.8211
+            except:
+                print "Fehler in main-function (main.py). Eines oder mehrere Layout-Elemente konnten nicht verschoben werden."
+                arcpy.AddMessage("Fehler in main-function (main.py). Eines oder mehrere Layout-Elemente konnten nicht verschoben werden.")
 
             layer.visible = False
             arcpy.RefreshTOC()
             arcpy.RefreshActiveView()
-        i+=1
+
 
 
 #Commit changes and delete variable reference
 pdfDoc.saveAndClose()
 
 #TODO Delete added point
-arcpy.DeleteRows_management(r"C:\\GIS-Data-Mirror-3-11-2015\\GIS\\GK25.gdb\\temp")
+arcpy.DeleteRows_management(tempSHP)
 arcpy.RefreshTOC()
 arcpy.RefreshActiveView()
 del rowInserter
