@@ -48,9 +48,9 @@ rowInserter.insertRow(newPoint)
 
 """ Update Header and az """
 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-    if elm.name == 'Az': # whatever your text element is named here
+    if elm.name == 'Az':
         elm.text = az
-    if elm.name == 'Kopf': # whatever your text element is named here
+    if elm.name == 'Kopf':
         elm.text = kopf
 time.sleep(2)
 arcpy.RefreshTOC()
@@ -68,18 +68,27 @@ for layer in layers:
             arcpy.RefreshActiveView()
 
             if layer.name == "geo1":
-                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte")
-
-            """ NUR FUER SPEZIALKARTEN (hydro1)"""
+                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
+                #TODO Ideen: link zu Geologischen Erläuterungen
+                #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
+            if layer.name == "geo2":
+                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo2/CC200_C100_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
+                #TODO Ideen: link zu Geologischen Erläuterungen
+            if layer.name == "geo3":
+                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo3/Spezialkarten_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
+                #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
 
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'HK500Legend': # whatever your text element is named here
+                    if elm.name == 'HK500Legend':
                         elm.elementPositionX = 6.8211
                         break
 
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
+                    if elm.name == 'Karte':
                         elm.text = "Grundwassergleichen-Karte"
                         break
                 time.sleep(2)
@@ -91,15 +100,15 @@ for layer in layers:
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
+                    if elm.name == 'Karte':
                         elm.text = "Karte der wassersensiblen / überschwemmungsgefährdeten Bereiche"
-                    if elm.name == 'UeberschwemmungText': # whatever your text element is named here
+                    if elm.name == 'UeberschwemmungText':
                         elm.elementPositionX = 4.2236
 
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete': # whatever your text element is named here
+                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete':
                         elm.elementPositionX = 2.3524
-                    if elm.name == 'WassersensibelLegend': # whatever your text element is named here
+                    if elm.name == 'WassersensibelLegend':
                         elm.elementPositionX = 11.9518
                 time.sleep(2)
             """ NUR FUER SPEZIALKARTEN (hydro3)"""
@@ -110,18 +119,18 @@ for layer in layers:
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
+                    if elm.name == 'Karte':
                         elm.text = "Karte der Trinkwasser- und Heilquellenschutzgebiete"
 
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Trinkwasserschutzgebiete': # whatever your text element is named here
+                    if elm.name == 'Trinkwasserschutzgebiete':
                         elm.elementPositionX = 13.8323
-                    if elm.name == 'Heilquellenschutzgebiete': # whatever your text element is named here
+                    if elm.name == 'Heilquellenschutzgebiete':
                         elm.elementPositionX = 13.8323
                 time.sleep(2)
             if layer.name == "frost1":
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
+                    if elm.name == 'Karte':
                         elm.text = "Frostzonenkarte von Bayern"
                 time.sleep(2)
             if layer.name == "hydro2":
@@ -140,25 +149,25 @@ for layer in layers:
             """ VERSCHIEBE Legenden wieder in den unsichtbaren Bereich """
             if layer.name == "hydro1":
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'HK500Legend': # whatever your text element is named here
+                    if elm.name == 'HK500Legend':
                         elm.elementPositionX = 36.8211
                         break
             if layer.name == "hydro2":
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
+                    if elm.name == 'Karte':
                         elm.text = u"Karte der wassersensiblen / überschwemmungsgefährdeten Bereiche"
-                    if elm.name == 'UeberschwemmungText': # whatever your text element is named here
+                    if elm.name == 'UeberschwemmungText':
                         elm.elementPositionX = 44.2236
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete': # whatever your text element is named here
+                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete':
                         elm.elementPositionX = 42.3524
-                    if elm.name == 'WassersensibelLegend': # whatever your text element is named here
+                    if elm.name == 'WassersensibelLegend':
                         elm.elementPositionX = 41.9518
             if layer.name == "hydro3":
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Trinkwasserschutzgebiete': # whatever your text element is named here
+                    if elm.name == 'Trinkwasserschutzgebiete':
                         elm.elementPositionX = 53.8323
-                    if elm.name == 'Heilquellenschutzgebiete': # whatever your text element is named here
+                    if elm.name == 'Heilquellenschutzgebiete':
                         elm.elementPositionX = 53.8323
 
             layer.visible = False

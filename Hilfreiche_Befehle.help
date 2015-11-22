@@ -8,3 +8,8 @@ git commit -m "first commit"
 first use: (git remote add origin https://github.com/tilman/genesis-software.git)
 
 git push -u origin master # local update
+
+
+### Normaler Workflow ###
+git add *; git status; git commit -m "was ist geaendert worden"
+git push -u origin master
