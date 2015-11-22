@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
-import arcpy,os,time
+
+import arcpy,os,time,point2mapLibrary.py
 
 """Input data"""
 x = 4489177
@@ -12,35 +13,9 @@ mxdPath = "CURRENT" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
 dfName = "Layers"
 views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1"]
 scales = ["15000","30000","30000","50000","30000","300000","50000"]
-pdfRootPath = r"C:\\GIS-Data-Mirror-3-11-2015\\"
+pdfRootPath = "C:/GIS-Data-Mirror-3-11-2015/"
 tempSHP = r"temp"
 
-""" Function Definitions """
-
-def checkGeometry(polygon,point):
-    """ polygon has to be either a layer object or a shp file / gdb feature file without a Raster-field.
-        point has to be a either a layer object or a shp/gdb feature file. NOTE: Only the last row will be taken into consideration.
-        Returns: A str-list of polygons which contain the point.
-    """
-    result=[]
-    string = r"Kartengrundlage:\n"
-    print type(string)
-    polygonGeometries= arcpy.CopyFeatures_management(polygon,arcpy.Geometry())
-    try:
-        pointGeometry= arcpy.CopyFeatures_management(point,arcpy.Geometry())[-1]
-    except:
-        arcpy.AddMessage("Die Point-Datei ist leer!")
-        print("Die Point-Datei ist leer!")
-    polygonNames = [row[0] for row in arcpy.da.SearchCursor(polygon, ("Name"))]
-
-    for index,polygonGeometry in enumerate(polygonGeometries):
-        if polygonGeometry.contains(pointGeometry):
-            print "Die Geometrie enthaelt:"+polygonNames[index]
-            print type(polygonNames[index])
-            result.append(polygonNames[index])
-            string += polygonNames[index] +"\n"
-            print type(string)
-    return result,string
 
 """Load Document"""
 mxd = arcpy.mapping.MapDocument(mxdPath)
@@ -84,49 +59,17 @@ arcpy.RefreshActiveView()
 """Select layers and export PDFs"""
 for layer in layers:
 
-    i = 0
-    for view in views:
+
+    for indexView,view in enumerate(views):
         if layer.name == view:
             layer.visible = True
-            df.scale = scales[i]
+            df.scale = scales[indexView]
             arcpy.RefreshTOC()
             arcpy.RefreshActiveView()
-            #quick n dirty: wait 30 sec to draw all wms data
-            #TODO Bei gelegenheit schoener schreiben
-            if layer.name == "hydro2":
-                time.sleep(30)
-                arcpy.RefreshTOC()
-                arcpy.RefreshActiveView()
-            if layer.name == "hydro3":
-                time.sleep(20)
-                arcpy.RefreshTOC()
-                arcpy.RefreshActiveView()
 
             if layer.name == "geo1":
-                geo1name = checkGeometry(r"geo1\GK25_footprint",tempSHP)
+                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte")
 
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
-                        elm.text = geo1name
-                        break
-                time.sleep(2)
-            """ NUR FUER SPEZIALKARTEN (geo2)"""
-            if layer.name == "geo2":
-                geo2name = checkGeometry(r"geo2\CC200_footprint",tempSHP)
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
-                        elm.text = geo2name #"Spezialkarte: genaue Namensimplementierung steht noch aus"
-                        break
-                time.sleep(2)
-
-            """ NUR FUER SPEZIALKARTEN (geo3)"""
-            if layer.name == "geo3":
-                geo3name = checkGeometry(r"geo3\Spezialkarte_footprint",tempSHP)
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte': # whatever your text element is named here
-                        elm.text = geo3name #"Spezialkarte: genaue Namensimplementierung steht noch aus"
-                        break
-                time.sleep(2)
             """ NUR FUER SPEZIALKARTEN (hydro1)"""
             if layer.name == "hydro1":
 
@@ -142,6 +85,11 @@ for layer in layers:
                 time.sleep(2)
             """ NUR FUER SPEZIALKARTEN (hydro2)"""
             if layer.name == "hydro2":
+                #wait 20 sec to draw WMS data
+                #TODO Bei Gelegenheit schoener schreiben
+                time.sleep(20)
+                arcpy.RefreshTOC()
+                arcpy.RefreshActiveView()
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
                     if elm.name == 'Karte': # whatever your text element is named here
                         elm.text = "Karte der wassersensiblen / überschwemmungsgefährdeten Bereiche"
@@ -156,6 +104,11 @@ for layer in layers:
                 time.sleep(2)
             """ NUR FUER SPEZIALKARTEN (hydro3)"""
             if layer.name == "hydro3":
+                #wait 20 sec to draw WMS data
+                #TODO Bei Gelegenheit schoener schreiben
+                time.sleep(20)
+                arcpy.RefreshTOC()
+                arcpy.RefreshActiveView()
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
                     if elm.name == 'Karte': # whatever your text element is named here
                         elm.text = "Karte der Trinkwasser- und Heilquellenschutzgebiete"
