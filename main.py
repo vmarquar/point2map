@@ -81,18 +81,10 @@ for layer in layers:
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
-
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'HK500Legend':
-                        elm.elementPositionX = 6.8211
-                        break
-
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte':
-                        elm.text = "Grundwassergleichen-Karte"
-                        break
-                time.sleep(2)
-            """ NUR FUER SPEZIALKARTEN (hydro2)"""
+                point2mapLibrary.picture2legend(picture_element="HK500Legend",x=6.8211,y=5.0)
+                #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
+                #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
+                staticText2textElement(static_text="Grundwassergleichenkarte",text_element="Karte")
             if layer.name == "hydro2":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben

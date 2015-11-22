@@ -21,8 +21,34 @@ def rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointG
         print("Fehler in Funktion rasterCatalogName2textElement (rasterCatalogName2textElement -> point2map-library).")
 
 
+def picture2legend(picture_element="HK500Legend",x=6.8211,y=5.0):
+    """ moves a legend item to a specified x,y location on the .pdf map
+        Dependencies: Legend item must be added prior executing this function
+    """
+    try:
+        for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
+            if elm.name == picture_element:
+                elm.elementPositionX = x
+                #TODO add elm.elementPositionY = y #genaue Position (um mögliche Bugs zu verhindern)
+                break
+    except:
+        arcpy.AddMessage("Fehler in Funktion picture2legend (picture2legend -> point2map-library).")
+        print("Fehler in Funktion picture2legend (picture2legend -> point2map-library).")
 
 
+def staticText2textElement(static_text="Kartenname",text_element="Karte"):
+    """ adds a given / known text to the .pdf map (layout element)
+        output is in specified encoding.
+    """
+    try:
+        for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
+            if elm.name == text_element
+                elm.text = static_text.encode(manual_encoding)
+                break
+        #time.sleep(2) #wait until text is drawn
+    except:
+        arcpy.AddMessage("Fehler in Funktion staticText2textElement (staticText2textElement -> point2map-library).")
+        print("Fehler in Funktion staticText2textElement (staticText2textElement -> point2map-library).")
 
 
 def checkGeometry(polygon,point):
