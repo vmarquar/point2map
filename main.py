@@ -84,26 +84,17 @@ for layer in layers:
                 point2mapLibrary.picture2legend(picture_element="HK500Legend",x=6.8211,y=5.0)
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
-                staticText2textElement(static_text="Grundwassergleichenkarte",text_element="Karte")
+                point2mapLibrary.staticText2textElement(static_text="Grundwassergleichenkarte",text_element="Karte")
             if layer.name == "hydro2":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'Karte':
-                        elm.text = "Karte der wassersensiblen / überschwemmungsgefährdeten Bereiche"
-                    if elm.name == 'UeberschwemmungText':
-                        elm.elementPositionX = 4.2236
-
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "PICTURE_ELEMENT"):
-                    if elm.name == 'Festgesetzte_ueberschwemmungsgebiete':
-                        elm.elementPositionX = 2.3524
-                    if elm.name == 'WassersensibelLegend':
-                        elm.elementPositionX = 11.9518
-                time.sleep(2)
-            """ NUR FUER SPEZIALKARTEN (hydro3)"""
+                point2mapLibrary.staticText2textElement(static_text="Karte der wassersensiblen und\nüberschwemmungsgefährdeten Bereiche",text_element="Karte")
+                point2mapLibrary.picture2legend(picture_element="UeberschwemmungText",x=4.2236,y=5.0)
+                point2mapLibrary.picture2legend(picture_element="Festgesetzte_ueberschwemmungsgebiete",x=2.3524,y=5.0)
+                point2mapLibrary.picture2legend(picture_element="WassersensibelLegend",x=11.9518,y=5.0)
             if layer.name == "hydro3":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
