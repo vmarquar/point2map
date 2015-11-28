@@ -1,22 +1,25 @@
 #!/usr/bin/python
 # coding: utf-8
 
-import arcpy,os,time,point2mapLibrary.py
+import arcpy,os,time,point2mapLibrary
 
 """Input data"""
-x = 4489177
-y = 5401462
+
+x = 4420171
+y = 5456084
 az = "Az. 12435"
-kopf = "KOPF KOPF KOPF KOPF"
+kopf = "éèäüö5&5%$"
 
 mxdPath = "CURRENT" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
 dfName = "Layers"
 views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1"]
 scales = ["15000","30000","30000","50000","30000","300000","50000"]
-pdfRootPath = "C:/GIS-Data-Mirror-3-11-2015/"
+pdfRootPath = "C:/Users/Valentin/Desktop/"
+if pdfRootPath[-1] != "/":
+    pdfRootPath += "/"
 pdfRootPath = os.path.normpath(pdfRootPath)
 
-tempSHP = r"temp"
+tempSHP = "temp"
 
 
 """Load Document"""
@@ -31,7 +34,7 @@ newExtent.XMax, newExtent.YMax = float(x), float(y)
 df.extent = newExtent
 """ Create PDF MapBook Document """
 #Set file name and remove if it already exists
-pdfPath = pdfRootPath+"GeologyMapBook.pdf"
+pdfPath = os.path.join(pdfRootPath,"GeologyMapBook.pdf")
 if os.path.exists(pdfPath):
     os.remove(pdfPath)
 pdfDoc = arcpy.mapping.PDFDocumentCreate(pdfPath)
@@ -71,45 +74,45 @@ for layer in layers:
 
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
-                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo1/GK25_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry=tempSHP,text_element="Karte")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
                 #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
             if layer.name == "geo2":
-                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo2/CC200_C100_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"geo2/Spezialkarten_footprint" ,pointGeometry=tempSHP,text_element="Karte")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "geo3":
-                point2mapLibrary.rasterCatalogName2textElement(footprint_layer=r"geo3/Spezialkarten_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"geo3/CC200_C100_footprint" ,pointGeometry=tempSHP,text_element="Karte")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
-                point2mapLibrary.picture2legend(picture_element="HK500Legend",x=6.8211,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="HK500Legend",x=6.8211,y=5.0)
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
-                point2mapLibrary.staticText2textElement(static_text="Grundwassergleichenkarte",text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Grundwassergleichenkarte",text_element="Karte")
             if layer.name == "hydro2":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                point2mapLibrary.staticText2textElement(static_text="Karte der wassersensiblen und\nüberschwemmungsgefährdeten Bereiche",text_element="Karte")
-                point2mapLibrary.picture2legend(picture_element="UeberschwemmungText",x=4.2236,y=5.0)
-                point2mapLibrary.picture2legend(picture_element="Festgesetzte_ueberschwemmungsgebiete",x=2.3524,y=5.0)
-                point2mapLibrary.picture2legend(picture_element="WassersensibelLegend",x=11.9518,y=5.0)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche".decode("mbcs"),text_element="Karte")
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="UeberschwemmungText",x=4.2236,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=2.3524,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=11.9518,y=5.0)
             if layer.name == "hydro3":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                point2mapLibrary.staticText2textElement(static_text="Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte")
-                point2mapLibrary.picture2legend(picture_element="Trinkwasserschutzgebiete",x=13.8323,y=5.0)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte")
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=13.8323,y=5.0)
                 #TODO x von Heilquellenschutzgebiete genauer definieren
-                point2mapLibrary.picture2legend(picture_element="Heilquellenschutzgebiete",x=11.8323,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=11.8323,y=5.0)
             if layer.name == "frost1":
-                point2mapLibrary.staticText2textElement(static_text="Frostzonenkarte Bayerns",text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayernsäö",text_element="Karte")
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
 
