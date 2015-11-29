@@ -8,11 +8,12 @@ import arcpy,os,time,point2mapLibrary
 x = 4420171
 y = 5456084
 az = "Az. 12435"
-kopf = "éèäüö5&5%$"
+kopf = u"éèäüö5&5%$"
 
 mxdPath = "CURRENT" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
 dfName = "Layers"
 views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1"]
+#views = []
 scales = ["15000","30000","30000","50000","30000","300000","50000"]
 pdfRootPath = "C:/Users/Valentin/Desktop/"
 if pdfRootPath[-1] != "/":
@@ -54,9 +55,9 @@ rowInserter.insertRow(newPoint)
 """ Update Header and az """
 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
     if elm.name == 'Az':
-        elm.text = az
+        elm.text = az.encode("mbcs")
     if elm.name == 'Kopf':
-        elm.text = kopf
+        elm.text = kopf.encode("mbcs")
 time.sleep(2)
 arcpy.RefreshTOC()
 arcpy.RefreshActiveView()
@@ -90,14 +91,14 @@ for layer in layers:
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="HK500Legend",x=6.8211,y=5.0)
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Grundwassergleichenkarte",text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Grundwassergleichenkarte",text_element="Karte")
             if layer.name == "hydro2":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche".decode("mbcs"),text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche",text_element="Karte")
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="UeberschwemmungText",x=4.2236,y=5.0)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=2.3524,y=5.0)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=11.9518,y=5.0)
@@ -107,12 +108,12 @@ for layer in layers:
                 time.sleep(20)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text="Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte")
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=13.8323,y=5.0)
                 #TODO x von Heilquellenschutzgebiete genauer definieren
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=11.8323,y=5.0)
             if layer.name == "frost1":
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayernsäö",text_element="Karte")
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte")
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
 
