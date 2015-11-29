@@ -1,0 +1,2 @@
+#Ignores following types to be added to the git repository
+*.lock
