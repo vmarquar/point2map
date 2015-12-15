@@ -76,7 +76,7 @@ def picture2legend(map_document,picture_element="HK500Legend",x=6.8211,y=5.0):
         print("Fehler in Funktion picture2legend (picture2legend -> point2map-library).")
 
 
-def staticText2textElement(map_document,static_text=u"Kartenname",text_element="Karte"):
+def staticText2textElement(map_document,static_text=u"Kartenname",text_element="Karte",x=2.31,y=3.8):
     """ adds a given / known text (UNICODE) to the .pdf map (layout element)
         output is in specified encoding.
     """
@@ -84,7 +84,8 @@ def staticText2textElement(map_document,static_text=u"Kartenname",text_element="
         for elm in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT"):
             if elm.name == text_element:
                 elm.text = static_text.encode("mbcs")
-
+                elm.elementPositionX = x
+                elm.elementPositionY = y
                 break
         #time.sleep(2) #wait until text is drawn
     except:
