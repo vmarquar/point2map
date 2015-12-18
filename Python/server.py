@@ -8,7 +8,7 @@ def checkDir (mypath,filename="config.file"):
     return onlyfiles
 
 
-mypath = "/Users/Valentin/Desktop/test/"
+mypath = "N:/Start_Script"
 filename="config.file"
 
 while True:
@@ -16,8 +16,13 @@ while True:
     for configfile in onlyfiles:
         try:
             print "starting script..."
-            print "successfully created map catalog. Deleting config.file now..."
-            os.remove(os.path.join(mypath,configfile))
+            try:
+                os.system("Z:/point2map_v02/main.py")
+                print "successfully created map catalog. Deleting config.file now..."
+                os.remove(os.path.join(mypath,configfile))
+            except:
+                raise
+
             pass
         except Exception as e:
             raise
