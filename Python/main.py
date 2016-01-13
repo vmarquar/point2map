@@ -135,16 +135,25 @@ for layer in layers:
 
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
+                #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                #add GK25 fullpath:
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
                 #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
             if layer.name == "geo2":
+                #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                #add GK25 fullpath:
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "geo3":
+                #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                #add GK25 fullpath:
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
