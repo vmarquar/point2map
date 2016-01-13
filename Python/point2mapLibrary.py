@@ -5,14 +5,14 @@ manual_encoding = "utf-8" # "latin-1" or "cp850" or sys.getdefaultencoding()
 manual_decoding = "mbcs" # "utf-8"
 
 
-def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte"):
+def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte",tableField="Name"):
     """ copies point and raster catalog geometry and checks which raster contains the input point(s).
         After that it prints the raster name to the map document.
         Dependency: checkGeometry function
     """
     try:
         print "debug"
-        raster_name = checkGeometry(footprint_layer,pointGeometry)
+        raster_name = checkGeometry(footprint_layer,pointGeometry,tableField)
         print "debug2"
         arcpy.AddMessage(raster_name)
         for elm in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT"):
@@ -28,7 +28,7 @@ def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footp
 
 
 
-def checkGeometry(polygon,point):
+def checkGeometry(polygon,point,tableField="Name"):
     """ polygon has to be either a layer object or a shp file / gdb feature file without a Raster-field.
         point has to be a either a layer object or a shp/gdb feature file. NOTE: Only the last row will be taken into consideration.
         Returns: A str-list of polygons which contain the point.
@@ -44,7 +44,7 @@ def checkGeometry(polygon,point):
         except:
             arcpy.AddWarning("Die Point-Datei ist leer!")
             print("Die Point-Datei ist leer!")
-        polygonNames = [row[0] for row in arcpy.da.SearchCursor(polygon, ("Name"))]
+        polygonNames = [row[0] for row in arcpy.da.SearchCursor(polygon, (tableField))]
 
         for index,polygonGeometry in enumerate(polygonGeometries):
             if polygonGeometry.contains(pointGeometry):

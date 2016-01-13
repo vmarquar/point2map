@@ -2,131 +2,113 @@
 # coding: utf-8
 
 """
-point2map_v02 ist fuer die console bestimmt!
+point2map_v03 ist fuer die console und Rechner PC-31 bestimmt!
 """
 
 import arcpy,os,time,point2mapLibrary,codecs
 from ConfigParser import SafeConfigParser
 
+""" PATHS """
+mxdPath = "C:/GIS/Python_Tools/point2map_v03/mxd/point2mapv03.mxd" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
+scriptPath = "C:/GIS/Python_Tools/point2map_v03/Python"
+tempSHP = "C:/GIS/Geodatabases/Sonstige_Daten.gdb/temp.shp"
+pdfRootPath = "N:/Start_Script/"
+geo1footprintPath = "C:/GIS/Geodatabases/footprints.gdb/GK25_footprint"
+geo2footprintPath = "C:/GIS/Geodatabases/footprints.gdb/Spezialkarten_footprint"
+geo3footprintPath = "C:/GIS/Geodatabases/footprints.gdb/C100_CC200_GK500_footprint"
+
 
 """Input (default) data"""
 x = 4420171
 y = 5456084
-az = u"Az. 12435"
-kopf = u"éèäüö5&5%$"
-mxdPath = "Z:\\point2map\\Arc-Data\\point2mapv02.mxd" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
+az = u"Az. 15000"
+kopf = u"Kartengrundlagen"
+
 dfName = "Layers"
 views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1","topo1"]
 #views = []
 scales = ["15000","30000","30000","100000","30000","300000","100000","30000"]
-pdfRootPath = "C:/Users/marquart/Desktop/"
+
 if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
 pdfRootPath = os.path.normpath(pdfRootPath)
-tempSHP = "Z:\\point2map_v02\\Data\\temp.shp"
+
 
 """Load Document"""
 mxd = arcpy.mapping.MapDocument(mxdPath)
 df = arcpy.mapping.ListDataFrames(mxd, dfName)[0]
 layers = arcpy.mapping.ListLayers(mxd, "*", df)
 newExtent = df.extent
+
+
+
+
 """ Data input via config.file """
 print "Starte point2map-Skript\t{0}\t{1}".format(time.strftime("%H:%M:%S"),(time.strftime("%d/%m/%Y")))
-#pathConfigFile = raw_input("Geben Sie den Pfad zu config.file ein:")
-# read arguments from config file
 parser = SafeConfigParser()
-config_file = raw_input("Geben Sie den absoluten Pfad zum config.file an. Alternativ kann der Default-Pfad mit OK eingestellt werden:")
-if config_file == "OK":
-    config_file = 'N:/Start_Script/config.file'
-with codecs.open(config_file, 'r', encoding='utf-8') as f:
+with codecs.open('N:/Start_Script/config.file', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
-
-#parser.read(pathConfigFile)
 print "Read in following arguments:\n"
-
 print parser.get('mandatory_fields','x')
 print parser.get('mandatory_fields','y')
 print parser.get('mandatory_fields','az')
 print parser.get('mandatory_fields','kopf')
 print parser.get('mandatory_fields','pdfRootPath')
 print parser.get('mandatory_fields','Untersuchungsgebiet')
-
 x =  float(parser.get('mandatory_fields','x'))
 y =  float(parser.get('mandatory_fields','y'))
-
 az =  parser.get('mandatory_fields','az')
 try:
     az = unicode(az)
 except:
-    print "fehler beim einlesesn von az"
-
+    print "Fehler beim einlesen von az"
 kopf = parser.get('mandatory_fields','kopf')
 try:
     kopf = u''+kopf
 except:
-    print "fehler beim einlesesn von kopf"
+    print "Fehler beim einlesen von kopf"
 Untersuchungsgebiet = parser.get('mandatory_fields','Untersuchungsgebiet')
 try:
     Untersuchungsgebiet = u''+Untersuchungsgebiet
 except:
-    print "fehler beim einlesesn von Untersuchungsgebiet"
-
+    print "Fehler beim einlesen von Untersuchungsgebiet"
 pdfRootPath =  parser.get('mandatory_fields','pdfRootPath')
 if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
 pdfRootPath = os.path.normpath(pdfRootPath)
 
-'''
-NUR FUER ARCGIS GUI NOTWENDIG:
-""" Get Parameters from Geoprocessing GUI """
-parameterNames = ["x","y","kopf","az"]
-for parameterIndex,parameterName in enumerate(parameterNames):
-    arcpy.AddMessage(parameterName)
-    arcpy.AddMessage("Als Textimport:{0}".format(parameterName))
-    parameterText= arcpy.GetParameterAsText(parameterIndex)
-    arcpy.AddMessage(parameterText)
-    arcpy.AddMessage(type(parameterText))
-    if parameterName == 'kopf' and parameterText != '' :
-        kopf = parameterText
-        for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-            if elm.name == 'Kopf':
-                elm.text = kopf.encode("mbcs")
-    if parameterName == "az" and parameterText != '':
-        az = u"Az. "+parameterText
-        for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-            if elm.name == 'Az':
-                elm.text = az.encode("mbcs")
-    if parameterName == "x" and parameterText != None and parameterText != "#" and parameterText != '':
-        x = float(parameterText)
-    if parameterName == "y" and parameterText != None and parameterText != "#" and parameterText != '':
-        y = float(parameterText)
-'''
+
+
+
 """Zoom to point"""
 newExtent.XMin, newExtent.YMin = float(x), float(y)
 newExtent.XMax, newExtent.YMax = float(x), float(y)
 df.extent = newExtent
+
+
+
 """ Create PDF MapBook Document """
+pdfName = "Kartengrundlagen_"str(x)+"-"str(y)+".pdf"
 #Set file name and remove if it already exists
-pdfPath = os.path.join(pdfRootPath,"Kartengrundlagen.pdf")
+pdfPath = os.path.join(pdfRootPath,pdfName)
 if os.path.exists(pdfPath):
     os.remove(pdfPath)
 pdfDoc = arcpy.mapping.PDFDocumentCreate(pdfPath)
-print "pdfDoc debug"
-""" Create temporary AOI point and delete it afterwards"""
 
-#create insert cursor
+
+
+""" Create temporary AOI point and delete it afterwards"""
 rowInserter = arcpy.InsertCursor(tempSHP)
-#create update cursor
-#rowUpdater = arcpy.UpdateCursor(tempSHP)
-#assign coordinates to point object
 pointGeometry = arcpy.Point(x,y)
 newPoint = rowInserter.newRow()
 newPoint.Shape = pointGeometry
 rowInserter.insertRow(newPoint)
 
-""" Update Header and az """
 
+
+
+""" Update Header and az """
 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
     if elm.name == 'Az':
         elm.text = az.encode("mbcs")
@@ -138,9 +120,11 @@ for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
 arcpy.RefreshTOC()
 arcpy.RefreshActiveView()
 
+
+
+
 """Select layers and export PDFs"""
 for layer in layers:
-
 
     for indexView,view in enumerate(views):
         if layer.name == view:
@@ -151,16 +135,16 @@ for layer in layers:
 
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"Z:/point2map/Data/footprints.gdb/GK25_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
                 #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
             if layer.name == "geo2":
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"Z:/point2map/Data/footprints.gdb/Spezialkarten_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "geo3":
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=r"Z:/point2map/Data/footprints.gdb/C100_CC200_GK500_footprint" ,pointGeometry=tempSHP,text_element="Karte")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
@@ -191,10 +175,12 @@ for layer in layers:
             if layer.name == "frost1":
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=2.31,y=3.8)
             if layer.name == "topo1":
+                time.sleep(10)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte 1:25.000",text_element="Karte",x=2.31,y=3.8)
 
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
+
 
 
             """ DRUCKE KARTEN AUS """
@@ -213,6 +199,8 @@ for layer in layers:
             except:
                 print "Datei wurde nicht gefunden."
                 arcpy.AddMessage("Die angegebene Datei wurde nicht gefunden!")
+
+
 
 
 
@@ -243,10 +231,10 @@ for layer in layers:
 
 #Commit changes and delete variable reference
 pdfDoc.saveAndClose()
-
 arcpy.DeleteRows_management(tempSHP)
 arcpy.RefreshTOC()
 arcpy.RefreshActiveView()
+mxd.save()
 del rowInserter
 del pdfDoc
 del mxd
