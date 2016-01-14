@@ -11,7 +11,7 @@ from ConfigParser import SafeConfigParser
 """ PATHS """
 mxdPath = "C:/GIS/Python_Tools/point2map_v03/mxd/point2mapv03.mxd" # or keyword: "CURRENT" r"E:\\GIS\\GK25_gesamt.mxd"
 scriptPath = "C:/GIS/Python_Tools/point2map_v03/Python"
-tempSHP = "C:/GIS/Geodatabases/Sonstige_Daten.gdb/temp.shp"
+tempSHP = "C:/GIS/Geodatabases/Sonstige_Daten.gdb/temp"
 pdfRootPath = "N:/Start_Script/"
 geo1footprintPath = "C:/GIS/Geodatabases/footprints.gdb/GK25_footprint"
 geo2footprintPath = "C:/GIS/Geodatabases/footprints.gdb/Spezialkarten_footprint"
@@ -31,6 +31,7 @@ scales = ["15000","30000","30000","100000","30000","300000","100000","30000"]
 
 if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
+
 pdfRootPath = os.path.normpath(pdfRootPath)
 
 
@@ -89,7 +90,7 @@ df.extent = newExtent
 
 
 """ Create PDF MapBook Document """
-pdfName = "Kartengrundlagen_"str(x)+"-"str(y)+".pdf"
+pdfName = "Kartengrundlagen_"+str(x)+"-"+str(y)+".pdf"
 #Set file name and remove if it already exists
 pdfPath = os.path.join(pdfRootPath,pdfName)
 if os.path.exists(pdfPath):

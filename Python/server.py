@@ -22,10 +22,7 @@ while True:
                 os.remove(os.path.join(mypath,configfile))
             except:
                 raise
-
             pass
-        except Exception as e:
-            raise
 
 
 

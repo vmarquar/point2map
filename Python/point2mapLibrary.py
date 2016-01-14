@@ -4,6 +4,46 @@ import arcpy,os
 manual_encoding = "utf-8" # "latin-1" or "cp850" or sys.getdefaultencoding()
 manual_decoding = "mbcs" # "utf-8"
 
+def addData2Point(pathSHP,az="123456",bez="k/a",geologie="k/a",x,y):
+	""" addData2Point fügt Projektbezogene Daten in das Punkt Shapefile auf dem Server."""
+	try:
+		if not (bez == "" and geologie == ""):
+			row = (az,bez,geologie,(x, y))
+			arcpy.AddMessage("Add new data entry: with AZ: {0},Bezeichnung: {1} and Geologie: {2}".format(az,bez,geologie))
+			# Open an InsertCursor
+			#
+			c = arcpy.da.InsertCursor(pathSHP, ("Az", "Bez","Geologie","SHAPE@XY"))
+
+		elif not bez == "":
+			row = (az,bez,(x, y))
+			arcpy.AddMessage("Add new data entry: with AZ: {0} and Bezeichnung: {1}".format(az,bez))
+			# Open an InsertCursor
+			#
+			c = arcpy.da.InsertCursor(pathSHP, ("Az", "Bez","SHAPE@XY"))
+		elif not az == "":
+			row = (az,(x, y))
+			arcpy.AddMessage("Add new data entry: with AZ:{0}".format(az))
+			# Open an InsertCursor
+			#
+			c = arcpy.da.InsertCursor(pathSHP, ("Az","SHAPE@XY"))
+		else:
+			row = (x, y)
+			arcpy.AddMessage("Add new data entry with x,y data")
+			# Open an InsertCursor
+			#
+			c = arcpy.da.InsertCursor(pathSHP, "SHAPE@XY")
+		# Insert new rows that include the az name and a x,y coordinate
+		#  pair that represents the project center
+		#
+		c.insertRow(row)
+
+		# Delete cursor object
+		#
+		del c
+	except:
+		arcpy.AddMessage("Error executing add_row function. Make sure your provided shape file has at least a field called Az.")
+		pass
+
 
 def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte",tableField="Name"):
     """ copies point and raster catalog geometry and checks which raster contains the input point(s).
