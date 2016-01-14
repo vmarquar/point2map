@@ -17,21 +17,18 @@ while True:
         try:
             print "starting script..."
             try:
-                os.system("Z:/point2map_v02/main.py")
+                os.system("C:\GIS\Python_Tools\point2map_v03\Python\main.py")
                 print "successfully created map catalog. Deleting config.file now..."
                 os.remove(os.path.join(mypath,configfile))
             except:
                 raise
+        except:
             pass
 
 
 
-    '''
-    if checkDir("/Users/Valentin/Desktop/test/"):
-        print "starting script..."
-        print "successfully created map catalog. Deleting config.file now..."
-        os.remove(os.path.join(mypath,filename))
-    '''
-    time.sleep(10)
+
+
     print "waiting for configfile..."
+    time.sleep(30)
     pass

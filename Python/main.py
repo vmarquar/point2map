@@ -57,6 +57,8 @@ print parser.get('mandatory_fields','az')
 print parser.get('mandatory_fields','kopf')
 print parser.get('mandatory_fields','pdfRootPath')
 print parser.get('mandatory_fields','Untersuchungsgebiet')
+print parser.get('optional','addPoint')
+
 x =  float(parser.get('mandatory_fields','x'))
 y =  float(parser.get('mandatory_fields','y'))
 az =  parser.get('mandatory_fields','az')
@@ -115,9 +117,12 @@ for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
         elm.text = az.encode("mbcs")
     if elm.name == 'Kopf':
         elm.text = kopf.encode("mbcs")
+        elm.elementPositionX = 11.0
+        elm.elementPositionY = 27.5
+    """
     if elm.name == 'Untersuchungsgebiet':
         elm.text = Untersuchungsgebiet.encode("mbcs")
-
+    """
 arcpy.RefreshTOC()
 arcpy.RefreshActiveView()
 
@@ -137,56 +142,77 @@ for layer in layers:
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
                 #add GK25 Name:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
                 #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
             if layer.name == "geo2":
                 #add GK25 Name:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "geo3":
                 #add GK25 Name:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Vollpfad_georef_Karte_mit_Legende")
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="HK500Legend",x=6.8211,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="HK500Legend",x=13.84,y=2.9)
+                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
+                    if elm.name == 'HKLegende':
+                        elm.elementPositionX = 8
+                        elm.elementPositionY = 4
+                    break
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="HKLegende",x=8,y=4)
+
+
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Grundwassergleichenkarte",text_element="Karte",x=2.31,y=3.8)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Grundwassergleichenkarte",text_element="Karte",x=11,y=23.75)
             if layer.name == "hydro2":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
-                time.sleep(20)
+                time.sleep(5)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche",text_element="Karte",x=2.31,y=3.8)
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="UeberschwemmungText",x=4.2236,y=5.0)
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=2.3524,y=5.0)
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=11.9518,y=5.0)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche",text_element="Karte",x=11,y=23.75)
+                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
+                    if elm.name == 'UeberschwemmungText':
+                        elm.elementPositionX = 11.35
+                        elm.elementPositionY = 3.8
+                    break
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=9.68,y=3.35)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=9.65,y=2.9)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=2.29,y=2.125)
             if layer.name == "hydro3":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
-                time.sleep(20)
+                time.sleep(5)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
+                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
+                    if elm.name == 'UeberschwemmungText':
+                        elm.elementPositionX = 11.35
+                        elm.elementPositionY = 3.8
+                    break
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=9.68,y=3.35)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=9.65,y=2.9)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte",x=2.31,y=3.8)
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=13.8323,y=5.0)
-                #TODO x von Heilquellenschutzgebiete genauer definieren
-                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=11.8323,y=5.0)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=2.29,y=2.125)
+
             if layer.name == "frost1":
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=2.31,y=3.8)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=11,y=23.75)
             if layer.name == "topo1":
-                time.sleep(10)
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte 1:25.000",text_element="Karte",x=2.31,y=3.8)
+                time.sleep(5)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte",text_element="Karte",x=11,y=23.75)
 
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
@@ -229,6 +255,14 @@ for layer in layers:
                         elm.elementPositionX = 36.8211
                     if elm.name == 'UeberschwemmungText':
                         elm.elementPositionX = 36.8211
+                    if elm.name == 'HKLegende':
+                        elm.elementPositionX = 36.8211
+                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
+                    if elm.name == 'UeberschwemmungText':
+                        elm.elementPositionX = 36.82
+                    if elm.name == 'HKLegende':
+                        elm.elementPositionX = 36.82
+
             except:
                 print "Fehler in main-function (main.py). Eines oder mehrere Layout-Elemente konnten nicht verschoben werden."
                 arcpy.AddMessage("Fehler in main-function (main.py). Eines oder mehrere Layout-Elemente konnten nicht verschoben werden.")
@@ -237,7 +271,7 @@ for layer in layers:
             arcpy.RefreshTOC()
             arcpy.RefreshActiveView()
 
-
+#TODO Punkt zu Projekt Shapefile hinzufügen
 
 #Commit changes and delete variable reference
 pdfDoc.saveAndClose()

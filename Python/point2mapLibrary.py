@@ -4,7 +4,7 @@ import arcpy,os
 manual_encoding = "utf-8" # "latin-1" or "cp850" or sys.getdefaultencoding()
 manual_decoding = "mbcs" # "utf-8"
 
-def addData2Point(pathSHP,az="123456",bez="k/a",geologie="k/a",x,y):
+def addData2Point(pathSHP,x,y,az="123456",bez="k/a",geologie="k/a"):
 	""" addData2Point fügt Projektbezogene Daten in das Punkt Shapefile auf dem Server."""
 	try:
 		if not (bez == "" and geologie == ""):
@@ -45,23 +45,20 @@ def addData2Point(pathSHP,az="123456",bez="k/a",geologie="k/a",x,y):
 		pass
 
 
-def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte",tableField="Name"):
+def rasterCatalogName2textElement(map_document,footprint_layer=r"geo1/GK25_footprint" ,pointGeometry="temp.shp",text_element="Karte",tableField="Name",x=11,y=23.75):
     """ copies point and raster catalog geometry and checks which raster contains the input point(s).
         After that it prints the raster name to the map document.
         Dependency: checkGeometry function
     """
     try:
-        print "debug"
         raster_name = checkGeometry(footprint_layer,pointGeometry,tableField)
-        print "debug2"
         arcpy.AddMessage(raster_name)
         for elm in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT"):
             if elm.name == text_element:
-                elm.text = raster_name
-                #elm.text = raster_name.encode(manual_encoding)
-                break
-        #time.sleep(2) #wait until text is drawn
-        print "debug3"
+				elm.text = raster_name
+				elm.elementPositionX = x
+				elm.elementPositionY = y
+				break
     except:
         arcpy.AddError("Fehler in Funktion rasterCatalogName2textElement ({0})(rasterCatalogName2textElement -> point2map-library).".format(footprint_layer))
         print("Fehler in Funktion rasterCatalogName2textElement (rasterCatalogName2textElement -> point2map-library).")
@@ -76,7 +73,7 @@ def checkGeometry(polygon,point,tableField="Name"):
     try:
 
         #result=[]
-        string = "Kartengrundlage:\n"
+        string = ""
         print type(string)
         polygonGeometries= arcpy.CopyFeatures_management(polygon,arcpy.Geometry())
         try:
@@ -89,10 +86,8 @@ def checkGeometry(polygon,point,tableField="Name"):
         for index,polygonGeometry in enumerate(polygonGeometries):
             if polygonGeometry.contains(pointGeometry):
                 print "Die Geometrie enthaelt:"+polygonNames[index]
-                print type(polygonNames[index])
                 #result.append(polygonNames[index])
                 string += polygonNames[index] +"\n"
-                print type(string)
         return string
     except:
         arcpy.AddMessage("Fehler in Funktion checkGeometry (checkGeometry -> point2map-library).")
