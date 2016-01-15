@@ -142,9 +142,9 @@ for layer in layers:
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "geo1":
                 #add GK25 Name:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="GK_25_Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="fullpath",x=2.35,y=1.75)
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
                 #TODO Ideen: Link zur Geologischen Karte mit Legende (replace string *_c.jpg with *.jpg)
@@ -164,29 +164,18 @@ for layer in layers:
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="HK500Legend",x=13.84,y=2.9)
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'HKLegende':
-                        elm.elementPositionX = 8
-                        elm.elementPositionY = 4
-                    break
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="HKLegende",x=8,y=4)
-
 
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Grundwassergleichenkarte",text_element="Karte",x=11,y=23.75)
             if layer.name == "hydro2":
-                #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
                 time.sleep(5)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der wassersensiblen und überschwemmungsgefährdeten Bereiche",text_element="Karte",x=11,y=23.75)
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'UeberschwemmungText':
-                        elm.elementPositionX = 11.35
-                        elm.elementPositionY = 3.8
-                    break
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="UeberschwemmungText",x=11.35,y=3.8)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=9.68,y=3.35)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=9.65,y=2.9)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
@@ -197,14 +186,10 @@ for layer in layers:
                 time.sleep(5)
                 arcpy.RefreshTOC()
                 arcpy.RefreshActiveView()
-                for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
-                    if elm.name == 'UeberschwemmungText':
-                        elm.elementPositionX = 11.35
-                        elm.elementPositionY = 3.8
-                    break
+                point2mapLibrary.picture2legend(map_document=mxd,picture_element="UeberschwemmungText",x=11.35,y=3.8)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Festgesetzte_ueberschwemmungsgebiete",x=9.68,y=3.35)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=9.65,y=2.9)
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte",x=2.31,y=3.8)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte",x=11,y=23.75)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=2.29,y=2.125)
 

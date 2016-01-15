@@ -101,11 +101,11 @@ def picture2legend(map_document,picture_element="HK500Legend",x=6.8211,y=5.0):
         Dependencies: Legend item must be added prior executing this function
     """
     try:
-        for elm in arcpy.mapping.ListLayoutElements(map_document, "PICTURE_ELEMENT"):
+        for elm in arcpy.mapping.ListLayoutElements(map_document, ""):
             if elm.name == picture_element:
-                elm.elementPositionX = x
-                #TODO add elm.elementPositionY = y #genaue Position (um mögliche Bugs zu verhindern)
-                break
+				elm.elementPositionX = x
+				elm.elementPositionY = y
+				break
     except:
         arcpy.AddWarning("Fehler in Funktion picture2legend (picture2legend -> point2map-library).")
         print("Fehler in Funktion picture2legend (picture2legend -> point2map-library).")
