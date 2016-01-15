@@ -1,9 +1,9 @@
 [mandatory_fields]
-x = 	4441697
-y = 	5482440
-az = 	15000
-kopf =	Bauvorhaben Testkopf lorem ipsum, asodas 123 8677
-Untersuchungsgebiet = 	Untersuchungsgebiet: Finkenschlag, 90579 Test
+x = 	4471697
+y = 	5432440
+az = 	15000/15
+kopf =	Bauvorhaben Testkopf lorem ipsum, asodas 123 8677\n\nBauvorhaben Lalal und Hebaka Hacker Neubau eines Einfamilienhauses\n(Musterstraße 1 in 54000 Musterhausen)
+Untersuchungsgebiet = Finkenschlag, 90579 Test
 pdfRootPath = 	C:/Users/marquart/Desktop/
 
 [optional]

@@ -47,7 +47,7 @@ newExtent = df.extent
 """ Data input via config.file """
 print "Starte point2map-Skript\t{0}\t{1}".format(time.strftime("%H:%M:%S"),(time.strftime("%d/%m/%Y")))
 parser = SafeConfigParser()
-with codecs.open('N:/Start_Script/config.file', 'r', encoding='utf-8') as f:
+with codecs.open('N:/Start_Script/config.txt', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
 print "Read in following arguments:\n"
@@ -152,14 +152,14 @@ for layer in layers:
                 #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
-                #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
-                #TODO Ideen: link zu Geologischen Erläuterungen
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo2footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="fullpath",x=2.35,y=1.75)
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=10&addwms=http://www.bis.bayern.de/wms/lfu/gk25_wms?"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
             if layer.name == "geo3":
                 #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
                 #add GK25 fullpath:
-                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="Vollpfad_georef_Karte_mit_Legende",x=2.35,y=1.75)
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo3footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="fullpath",x=2.35,y=1.75)
                 #TODO Falls weitere Legendeninformationen verfügbar sind, können diese hier festgelegt werden.
                 #TODO Ideen: link zu Geologischen Erläuterungen
             if layer.name == "hydro1":
@@ -168,6 +168,7 @@ for layer in layers:
 
                 #TODO staticText2textElement durch eine Version von rasterCatalogName2textElement ersetzen
                 #TODO Dazu muss zunächst der Footprint für Ansbach, HK500 und Wassergleichen-Nürnberg erstellt werden
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"file:///C:/PfadzuHK500",text_element="vollpfad",x=2.35,y=1.75)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Grundwassergleichenkarte",text_element="Karte",x=11,y=23.75)
             if layer.name == "hydro2":
                 #TODO Bei Gelegenheit schoener schreiben
@@ -180,6 +181,9 @@ for layer in layers:
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="WassersensibelLegend",x=9.65,y=2.9)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=2.29,y=2.125)
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12&addwms=http://www.lfu.bayern.de/gdi/wms/hwrk/wassersensible_bereiche?"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
+
             if layer.name == "hydro3":
                 #wait 20 sec to draw WMS data
                 #TODO Bei Gelegenheit schoener schreiben
@@ -192,7 +196,8 @@ for layer in layers:
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Karte der Trinkwasser- und Heilquellenschutzgebiete",text_element="Karte",x=11,y=23.75)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Trinkwasserschutzgebiete",x=2.29,y=2.84)
                 point2mapLibrary.picture2legend(map_document=mxd,picture_element="Heilquellenschutzgebiete",x=2.29,y=2.125)
-
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12&addwms=http://www.lfu.bayern.de/gdi/wms/hwrk/ueberschwemmungsgebiete?"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
             if layer.name == "frost1":
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=11,y=23.75)
             if layer.name == "topo1":

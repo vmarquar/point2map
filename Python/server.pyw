@@ -15,10 +15,8 @@ while True:
     onlyfiles = checkDir(mypath,filename)
     for configfile in onlyfiles:
         try:
-            print "starting script..."
             try:
                 os.system("C:\GIS\Python_Tools\point2map_v03\Python\main.py")
-                print "successfully created map catalog. Deleting config.file now..."
                 os.remove(os.path.join(mypath,configfile))
             except:
                 raise
@@ -29,6 +27,5 @@ while True:
 
 
 
-    print "waiting for configfile..."
     time.sleep(30)
     pass
