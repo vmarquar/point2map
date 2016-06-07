@@ -1,0 +1,11 @@
+﻿[mandatory_fields]
+x = 4425906
+y = 5466636
+az = 16004/8
+kopf = BV Wagner und Sohn GbR
+Untersuchungsgebiet = 
+pdfRootPath = N:/Start_Script
+
+[optional]
+addPoint = TRUE
+Category = GT
