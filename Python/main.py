@@ -3,6 +3,14 @@
 
 """
 point2map_v03 ist fuer die console und Rechner PC-31 bestimmt!
+
+TODO: Hinzufügen von neuen Layern (PDF Seiten)
+1. Layername in views liste aufnehmen
+2. Zoommaßstab für neuen "View" in views-Liste aufnehmen
+3. Neuen Legendeneintrag ab Zeile 255 einfügen
+4. neuen Legendeneintrag wieder in den "unsichtbaren" Bereich verschieben (ab Zeile 250)
+
+
 """
 
 import arcpy,os,time,point2mapLibrary,codecs
@@ -16,7 +24,8 @@ pdfRootPath = "N:/Start_Script/"
 geo1footprintPath = "C:/GIS/Geodatabases/footprints.gdb/GK25_footprint"
 geo2footprintPath = "C:/GIS/Geodatabases/footprints.gdb/Spezialkarten_footprint"
 geo3footprintPath = "C:/GIS/Geodatabases/footprints.gdb/C100_CC200_GK500_footprint"
-
+sk1footprintPath = "C:/GIS/Geodatabases/footprints.gdb/SK25_footprint"
+projectPointPath = "N:/Unterlagen/Geologische Karten/Projekte_SCRIPT/Projekte_SCRIPT.shp"
 
 """Input (default) data"""
 x = 4420171
@@ -25,9 +34,9 @@ az = u"Az. 15000"
 kopf = u"Kartengrundlagen"
 
 dfName = "Layers"
-views = ["geo1", "geo2","geo3","hydro1","hydro2","hydro3","frost1","topo1"]
+views = ["geo1", "geo2","geo3","sk1","hydro1","hydro2","hydro3","frost1","topo1"]
 #views = []
-scales = ["15000","30000","30000","100000","30000","300000","100000","30000"]
+scales = ["15000","30000","30000","35000","100000","30000","30000","100000","30000"]
 
 if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
@@ -47,7 +56,12 @@ newExtent = df.extent
 """ Data input via config.file """
 print "Starte point2map-Skript\t{0}\t{1}".format(time.strftime("%H:%M:%S"),(time.strftime("%d/%m/%Y")))
 parser = SafeConfigParser()
-with codecs.open('N:/Start_Script/config.txt', 'r', encoding='utf-8') as f:
+with codecs.open('N:/Start_Script/config.txt', 'r', encoding='utf-8-sig') as f:
+    """    first = f.read(1)
+    if first != '\ufeff':
+        # not a BOM, rewind
+        f.seek(0)
+    """
     parser.readfp(f)
 
 print "Read in following arguments:\n"
@@ -58,6 +72,7 @@ print parser.get('mandatory_fields','kopf')
 print parser.get('mandatory_fields','pdfRootPath')
 print parser.get('mandatory_fields','Untersuchungsgebiet')
 print parser.get('optional','addPoint')
+print parser.get('optional','Category')
 
 x =  float(parser.get('mandatory_fields','x'))
 y =  float(parser.get('mandatory_fields','y'))
@@ -70,7 +85,7 @@ kopf = parser.get('mandatory_fields','kopf')
 try:
     kopf = u''+kopf
 except:
-    print "Fehler beim einlesen von kopf"
+    print "Fehler beim einlesen von Untersuchungsgebiet"
 Untersuchungsgebiet = parser.get('mandatory_fields','Untersuchungsgebiet')
 try:
     Untersuchungsgebiet = u''+Untersuchungsgebiet
@@ -81,6 +96,20 @@ if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
 pdfRootPath = os.path.normpath(pdfRootPath)
 
+""" Extract Data for Project point """
+try:
+    addPoint = parser.get('optional','addPoint')
+    try:
+        addPoint = u''+addPoint
+    except:
+        print "Could not resolve addPoint."
+    category = parser.get('optional','Category')
+    try:
+        category = u''+category
+    except:
+        print "Could not resolve category."
+except:
+    print "No optional arguments found. Proceeding with pdf creation. A Project point will not be added!"
 
 
 
@@ -200,10 +229,20 @@ for layer in layers:
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
             if layer.name == "frost1":
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=11,y=23.75)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"file:///C:/PfadzuFrostZonenKArte",text_element="vollpfad",x=2.35,y=1.75)
+
             if layer.name == "topo1":
                 time.sleep(5)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte",text_element="Karte",x=11,y=23.75)
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
 
+            if layer.name == "sk1":
+                #add GK25 Name:
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=sk1footprintPath ,pointGeometry=tempSHP,text_element="Bezugshorizont",tableField="Bezugshorizont_local",x=3.161,y=3.2652)
+                #add GK25 fullpath:
+                #point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="vollpfad",tableField="fullpath",x=2.35,y=1.75)
+                point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=sk1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
 
@@ -252,6 +291,8 @@ for layer in layers:
                         elm.elementPositionX = 36.82
                     if elm.name == 'HKLegende':
                         elm.elementPositionX = 36.82
+                    if elm.name == 'Bezugshorizont':
+                        elm.elementPositionX = 36.82
 
             except:
                 print "Fehler in main-function (main.py). Eines oder mehrere Layout-Elemente konnten nicht verschoben werden."
@@ -272,3 +313,26 @@ mxd.save()
 del rowInserter
 del pdfDoc
 del mxd
+''' END CREATION OF PDF DOCUMENT -> RPOCEEDING WITH ADDING DATA TO PROJECT POINT '''
+if addPoint == "TRUE":
+    try:
+        rowInserter = arcpy.InsertCursor(projectPointPath)
+        rowUpdater = arcpy.UpdateCursor(projectPointPath)
+        pointGeometry = arcpy.Point(x,y)
+        newPoint = rowInserter.newRow()
+
+        newPoint.Shape = pointGeometry
+        # add az to point
+        if not az == None:
+            newPoint.az = az
+        # add kopf data to bez (Bezeichnung)
+        if not kopf == None:
+            newPoint.Bemerkung = kopf
+        if not category == None:
+            newPoint.Kategorie = category
+
+        rowInserter.insertRow(newPoint)
+
+        del rowInserter
+    except:
+        print("Could not add project point. Exiting now...")
