@@ -1,8 +1,20 @@
 #!/usr/bin/python
 # coding: utf-8
-import arcpy,os
+import arcpy,os,requests,json
 manual_encoding = "utf-8" # "latin-1" or "cp850" or sys.getdefaultencoding()
 manual_decoding = "mbcs" # "utf-8"
+
+
+def getHeight(x,y):
+	""" gets height from geoportal API. Input coords in GK4!"""
+	""" Dependencies: json, requests"""
+	baseurl = 'http://geoportal.bayern.de/ba-backend/dgm/height?'
+	x = 'easting='+str(x)
+	y = 'northing='+str(y)
+	url = baseurl+x+'&'+y
+	req = requests.get(url)
+	heightObj = json.loads(req.text) # heightObj['height'] = 504
+	return heightObj['height'] # returns integer value of height at requested point
 
 def addData2Point(pathSHP,x,y,az="123456",bez="k/a",geologie="k/a"):
 	""" addData2Point fügt Projektbezogene Daten in das Punkt Shapefile auf dem Server."""

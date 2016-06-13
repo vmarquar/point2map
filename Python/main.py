@@ -169,6 +169,11 @@ for layer in layers:
             arcpy.RefreshActiveView()
 
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
+            if layer.name == "topo1":
+                height = point2mapLibrary.getHeight(x,y)
+                height = 'Höhe am Untersuchungspunkt [m ü. NN]: '+str(height)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=height,text_element="height",x=2.2795 ,y=3.285 )
+
             if layer.name == "geo1":
                 #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=geo1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="GK_25_Name",x=11,y=23.75)
@@ -288,6 +293,8 @@ for layer in layers:
                         elm.elementPositionX = 36.8211
                 for elm in arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT"):
                     if elm.name == 'UeberschwemmungText':
+                        elm.elementPositionX = 36.82
+                    if elm.name == 'height':
                         elm.elementPositionX = 36.82
                     if elm.name == 'HKLegende':
                         elm.elementPositionX = 36.82
