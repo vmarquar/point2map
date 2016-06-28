@@ -13,7 +13,7 @@ TODO: Hinzufügen von neuen Layern (PDF Seiten)
 
 """
 
-import arcpy,os,time,point2mapLibrary,codecs
+import arcpy,os,time,point2mapLibrary,codecs, requests, json
 from ConfigParser import SafeConfigParser
 
 """ PATHS """
@@ -171,7 +171,7 @@ for layer in layers:
             """ ERSTELLE LEGENDEN / VERÄNDERE TEXT ELEMENTE """
             if layer.name == "topo1":
                 height = point2mapLibrary.getHeight(x,y)
-                height = 'Höhe am Untersuchungspunkt [m ü. NN]: '+str(height)
+                height = u'Hoehe am Untersuchungspunkt [m NN]: '+str(height)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=height,text_element="height",x=2.2795 ,y=3.285 )
 
             if layer.name == "geo1":
