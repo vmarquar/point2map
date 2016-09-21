@@ -6,11 +6,11 @@ point2map_v03 ist fuer die console und Rechner PC-31 bestimmt!
 
 TODO: Hinzufügen von neuen Layern (PDF Seiten)
 1. Layername in views liste aufnehmen
-2. Zoommaßstab für neuen "View" in views-Liste aufnehmen
+2. Zoommaßstab für neuen "View" in scales-Liste aufnehmen
 3. Neuen Legendeneintrag ab Zeile 255 einfügen
 4. neuen Legendeneintrag wieder in den "unsichtbaren" Bereich verschieben (ab Zeile 250)
 
-
+last edit: added new topo2 page (Flurkarte & Satellitenbild)
 """
 
 import arcpy,os,time,point2mapLibrary,codecs, requests, json
@@ -34,9 +34,9 @@ az = u"Az. 15000"
 kopf = u"Kartengrundlagen"
 
 dfName = "Layers"
-views = ["geo1", "geo2","geo3","sk1","hydro1","hydro2","hydro3","frost1","topo1"]
+views = ["geo1", "geo2","geo3","sk1","hydro1","hydro2","hydro3","frost1","topo1","topo2"]
 #views = []
-scales = ["15000","30000","30000","35000","100000","30000","30000","100000","30000"]
+scales = ["15000","30000","30000","35000","100000","30000","30000","100000","30000","500"]
 
 if pdfRootPath[-1] != "/":
     pdfRootPath += "/"
@@ -173,6 +173,10 @@ for layer in layers:
                 height = point2mapLibrary.getHeight(x,y)
                 height = u'Hoehe am Untersuchungspunkt [m NN]: '+str(height)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=height,text_element="height",x=2.2795 ,y=3.285 )
+                time.sleep(5)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte",text_element="Karte",x=11,y=23.75)
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
 
             if layer.name == "geo1":
                 #add GK25 Name:
@@ -236,12 +240,6 @@ for layer in layers:
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Frostzonenkarte Bayerns",text_element="Karte",x=11,y=23.75)
                 point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"file:///C:/PfadzuFrostZonenKArte",text_element="vollpfad",x=2.35,y=1.75)
 
-            if layer.name == "topo1":
-                time.sleep(5)
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Topographische Karte",text_element="Karte",x=11,y=23.75)
-                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12"
-                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
-
             if layer.name == "sk1":
                 #add GK25 Name:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=sk1footprintPath ,pointGeometry=tempSHP,text_element="Bezugshorizont",tableField="Bezugshorizont_local",x=3.161,y=3.2652)
@@ -250,6 +248,14 @@ for layer in layers:
                 point2mapLibrary.rasterCatalogName2textElement(map_document=mxd,footprint_layer=sk1footprintPath ,pointGeometry=tempSHP,text_element="Karte",tableField="Name",x=11,y=23.75)
 
             #TODO Hier könenn weitere Legenden für weitere PDF Seiten hinzu gefügt werden
+            if layer.name == "topo2":
+                time.sleep(15)
+                height = point2mapLibrary.getHeight(x,y)
+                height = u'Hoehe am Untersuchungspunkt [m NN]: '+str(height)
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=height,text_element="height",x=2.2795 ,y=3.285 )
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=u"Satellitenbild und Flurkarte",text_element="Karte",x=11,y=23.75)
+                static_link = u"http://geoportal.bayern.de/bayernatlas-klassik?lon="+str(x)+"&lat="+str(y)+"&zoom=12"
+                point2mapLibrary.staticText2textElement(map_document=mxd,static_text=static_link,text_element="vollpfad",x=2.35,y=1.75)
 
 
 
